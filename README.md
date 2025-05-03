@@ -4,8 +4,8 @@
 私の実行環境紹介
 - OS : Windows11
 - WSL verison : 2.5.7.0
-- Linux OS : Fedora42
-- CPU : Ryzen 7 9700X
+- Linux OS : Fedora Linux 42
+- CPU : AMD Ryzen 7 9700X
 - Memory : DDR5 64GB
 - GPU : NVIDIA GeForce GTX 1060 6GB
 
