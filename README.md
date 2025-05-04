@@ -163,7 +163,24 @@ chmod +x build.sh start_comfyui.sh
 ./build.sh
 ```
 
+FLUX.1関係のファイルはHugging Faceにてアカウント登録後、手動でダウンロード  
 
+> flux1-dev.safetensors
+
+https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors
+
+ダウンロードしたら、  
+/opt/ComfyUI-running-on-Podman-WSL2/data/models/checkpoints/flux1-dev.safetensors  
+に移動
+
+
+> diffusion_pytorch_model.safetensors
+
+https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/vae/diffusion_pytorch_model.safetensors
+
+ダウンロードしたら、  
+/opt/ComfyUI-running-on-Podman-WSL2/data/models/vae/diffusion_pytorch_model.safetensors  
+に移動
 
 # Launch ComfyUI
 ここまでたどり着いたらあとはComfyUIを起動するのみ
