@@ -14,8 +14,9 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 WORKDIR ${ROOT}
 COPY . /docker/
 RUN chmod u+x /docker/entrypoint.sh \
-    && cp /docker/extra_model_paths.yaml ${ROOT} \
-    && bash /docker/patch_weights_only.sh
+    && cp /docker/extra_model_paths.yaml ${ROOT}
+
+#RUN bash /docker/patch_weights_only.sh
 
 ENV NVIDIA_VISIBLE_DEVICES=all PYTHONPATH="${PYTHONPATH}:${PWD}" CLI_ARGS=""
 EXPOSE 8888
