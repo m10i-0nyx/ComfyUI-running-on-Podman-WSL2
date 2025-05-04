@@ -10,8 +10,5 @@ podman run -d --rm \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/data:/data" \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \
   --device "nvidia.com/gpu=all" \
-  -e CLI_ARGS="--force-fp32" \
+  -e CLI_ARGS="--force-fp32 --dont-print-server" \
   localhost/comfyui:v0.3.31
-
-# k8sだと自分の環境だとうまくいかなのでメモだけ
-#podman kube play --replace k8s.yaml
