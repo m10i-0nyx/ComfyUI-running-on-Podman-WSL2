@@ -182,7 +182,7 @@ https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/vae/diffusion_p
 /opt/ComfyUI-running-on-Podman-WSL2/data/models/vae/diffusion_pytorch_model.safetensors  
 に移動
 
-# Launch ComfyUI
+## Launch ComfyUI
 ここまでたどり着いたらあとはComfyUIを起動するのみ
 ```bash
 # ComfyUIのコンテナを実行(--force-fp16指定)
