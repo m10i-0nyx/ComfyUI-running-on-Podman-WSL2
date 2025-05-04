@@ -11,7 +11,7 @@
 
 ```.wslconfig
 [wsl2]
-memory=16GB
+memory=32GB
 swap=0
 kernelCommandLine = cgroup_no_v1=all
 ```
@@ -147,52 +147,36 @@ PodmanコンテナでもGPU認識していれば下記のような結果が出�
 +-----------------------------------------+------------------------+----------------------+
 ```
 
-引き続きComfyUIを準備する
+引き続きComfyUI用コンテナを準備する
 ```bash
 # /opt配下にリポジトリをクローン(取得)
 cd /opt
 git clone https://github.com/h-mineta/ComfyUI-running-on-Podman-WSL2.git
 
-## 一括して動かす用のstart.shも作ったが、1コマンドずつ動かすほうが確実
-#chmod +x start.sh
-#./start.sh
+cd ComfyUI-running-on-Podman-WSL2
+chmod +x build.sh start_comfyui.sh
 
-cd /opt/ComfyUI-running-on-Podman-WSL2/
-
+# **初回だけ実行**
 # モデルをダウンロードするためのコンテナをビルド
-podman build -t model-downloader:latest \
-  --force-rm \
-  --volume "/opt/ComfyUI-running-on-Podman-WSL2/data:/data" \
-  ./services/download/
-
-# モデルをダウンロードするためのコンテナを実行
-# 初回にだけ実行
-podman run -it --rm \
-  --name model-downloader \
-  --volume "/opt/ComfyUI-running-on-Podman-WSL2/data:/data" \
-  localhost/model-downloader:latest
-
 # ComfyUIのコンテナをビルド
-podman build -t comfyui:v0.3.31 \
-  --force-rm \
-  --volume "/opt/ComfyUI-running-on-Podman-WSL2/data:/data" \
-  --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \
-  --device "nvidia.com/gpu=all" \
-  ./services/comfyui/
-
-# ComfyUIのコンテナを実行
-# 次回以降はWSL2起動時に下記だけ実行
-podman run -d --rm \
-  --name comfyui \
-  -p 8888:8888 \
-  --volume "/opt/ComfyUI-running-on-Podman-WSL2/data:/data" \
-  --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \
-  --device "nvidia.com/gpu=all" \
-  localhost/comfyui:v0.3.31
+# モデルをダウンロードするためのコンテナを実行
+./build.sh
 ```
 
-ここまで上手くいけば  
-Windows端末のWebブラウザで http://localhost:8888 を開けばComfyUIが立ち上がる
+
+
+# Launch ComfyUI
+ここまでたどり着いたらあとはComfyUIを起動するのみ
+```bash
+# ComfyUIのコンテナを実行(--force-fp16指定)
+./start_comfyui_fp16.sh
+
+# もしくは　--force-fp32指定
+# ./start_comfyui_fp32.sh
+```
+
+Windows端末のWebブラウザで http://localhost:8888 を
+開けばComfyUIが立ち上がるはず
 
 ## Additional Information
 ただこのまま生成を続けると、/opt配下に大量のモデル・画像データが置かれてコンテナ肥大化  
