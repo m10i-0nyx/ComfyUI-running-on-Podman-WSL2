@@ -185,11 +185,11 @@ https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/vae/diffusion_p
 ## Launch ComfyUI
 ここまでたどり着いたらあとはComfyUIを起動するのみ
 ```bash
-# ComfyUIのコンテナを実行(--force-fp16指定)
-./start_comfyui_fp16.sh
+# ComfyUIのコンテナを実行(defaultで --force-fp16 指定)
+./start_comfyui.sh
 
 # もしくは　--force-fp32指定
-# ./start_comfyui_fp32.sh
+# ./start_comfyui.sh --force-fp32
 ```
 
 Windows端末のWebブラウザで http://localhost:8888 を
