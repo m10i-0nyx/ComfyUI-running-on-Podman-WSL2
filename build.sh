@@ -16,7 +16,7 @@ podman run -it --rm \
   localhost/model-downloader:latest
 
 # ComfyUIのコンテナをビルド
-podman build -t comfyui:v0.3.31 \
+podman build -t comfyui:v0.3.39 \
   --force-rm \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/data:/data" \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \

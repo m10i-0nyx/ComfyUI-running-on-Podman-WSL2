@@ -11,4 +11,4 @@ podman run -d --rm \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \
   --device "nvidia.com/gpu=all" \
   -e CLI_ARGS="--force-fp16 --dont-print-server" \
-  localhost/comfyui:v0.3.31
+  localhost/comfyui:v0.3.39
