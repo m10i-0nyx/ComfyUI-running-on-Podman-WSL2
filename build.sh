@@ -22,3 +22,11 @@ podman build -t comfyui:v0.3.39 \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \
   --device "nvidia.com/gpu=all" \
   ./services/comfyui/
+
+# ComfyUI-Manager をクローン
+if [ ! -d "./output/config/custom_nodes/ComfyUI-Manager" ]; then
+  git clone https://github.com/ltdrdata/ComfyUI-Manager.git ./output/config/custom_nodes/ComfyUI-Manager
+  cd ./output/config/custom_nodes/ComfyUI-Manager
+  git fetch --tags
+  git checkout tags/3.32.5
+fi
