@@ -43,10 +43,10 @@ winget install --id Microsoft.WSL --source winget
 
 5. ここで一旦Windows端末のOSを再起動する  
 
-6. WSLをアップデート(Pre-releaseの2.5.7.0～)  
+6. WSLをアップデート
 インストーラーが立ち上がるので「はい」  
 ```
-wsl --update --pre-release
+wsl --update
 ```
 
 7. WSLにFedora42を入れる  
