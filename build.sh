@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd /opt/ComfyUI-running-on-Podman-WSL2
+COMFYUI_TAG="v0.3.40"
 
 # モデルをダウンロードするためのコンテナをビルド
 podman build -t model-downloader:latest \
@@ -16,8 +17,9 @@ podman run -it --rm \
   localhost/model-downloader:latest
 
 # ComfyUIのコンテナをビルド
-podman build -t comfyui:v0.3.39 \
+podman build -t comfyui:${COMFYUI_TAG} \
   --force-rm \
+  --build-arg COMFYUI_TAG=${COMFYUI_TAG} \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/data:/data" \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \
   --device "nvidia.com/gpu=all" \

@@ -1,6 +1,7 @@
 FROM docker.io/pytorch/pytorch:2.7.0-cuda11.8-cudnn9-runtime
 
 ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1
+ARG COMFYUI_TAG=v0.3.0
 
 RUN apt-get update && apt-get install -y git && apt-get clean
 
@@ -8,7 +9,7 @@ ENV ROOT=/comfyui
 RUN --mount=type=cache,target=/root/.cache/pip \
     git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} && \
     cd ${ROOT} && \
-    git checkout tags/v0.3.39 && \
+    git checkout tags/${COMFYUI_TAG} && \
     pip3 install -r requirements.txt
 
 WORKDIR ${ROOT}
