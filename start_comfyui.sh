@@ -1,6 +1,11 @@
 #!/bin/bash
 
 cd /opt/ComfyUI-running-on-Podman-WSL2
+if [ -f .env ]; then
+  set -a
+  source .env
+  set +a
+fi
 
 ARGS="--force-fp16"
 # --force-fp32 が引数に含まれている場合、ARGSに"--force-fp32"をセット
@@ -23,4 +28,4 @@ podman run -d --rm \
   --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \
   --device "nvidia.com/gpu=all" \
   -e CLI_ARGS="${ARGS}" \
-  localhost/comfyui:v0.3.39
+  localhost/comfyui:${COMFYUI_TAG}

@@ -1,7 +1,11 @@
 #!/bin/bash
 
 cd /opt/ComfyUI-running-on-Podman-WSL2
-COMFYUI_TAG="v0.3.40"
+if [ -f .env ]; then
+  set -a
+  source .env
+  set +a
+fi
 
 # モデルをダウンロードするためのコンテナをビルド
 podman build -t model-downloader:latest \
