@@ -24,8 +24,8 @@ ARGS="${ARGS} --dont-print-server"
 podman run -d --rm \
   --name comfyui \
   -p 8888:8888 \
-  --volume "/opt/ComfyUI-running-on-Podman-WSL2/data:/data" \
-  --volume "/opt/ComfyUI-running-on-Podman-WSL2/output:/output" \
+  --volume "$(pwd)/data:/data" \
+  --volume "$(pwd)/output:/output" \
   --device "nvidia.com/gpu=all" \
   -e CLI_ARGS="${ARGS}" \
   localhost/comfyui:${COMFYUI_TAG}
