@@ -1,16 +1,27 @@
-FROM docker.io/pytorch/pytorch:2.7.1-cuda11.8-cudnn9-runtime
+FROM docker.io/nvidia/cuda:12.9.1-base-ubuntu24.04
 
 ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1
-ARG COMFYUI_TAG=v0.3.0
-
-RUN apt-get update && apt-get install -y git && apt-get clean
-
+ARG COMFYUI_TAG=v0.3.48
 ENV ROOT=/comfyui
+
+RUN set -eux \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends git python3.12 python3.12-venv python3-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# 仮想環境作成
+ENV VENV_PATH=/opt/venv
+RUN python3 -m venv $VENV_PATH
+ENV PATH="${VENV_PATH}/bin:${PATH}"
+
 RUN --mount=type=cache,target=/root/.cache/pip \
-    git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} && \
-    cd ${ROOT} && \
-    git checkout tags/${COMFYUI_TAG} && \
-    pip3 install -r requirements.txt
+    set -eux \
+    && git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} \
+    && cd ${ROOT} \
+    && git checkout tags/${COMFYUI_TAG} \
+    && pip3 install --upgrade pip \
+    && pip3 install -r requirements.txt
 
 WORKDIR ${ROOT}
 COPY . /docker/
