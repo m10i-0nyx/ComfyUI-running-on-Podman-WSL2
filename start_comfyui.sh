@@ -1,9 +1,9 @@
 #!/bin/bash
 
 cd /opt/ComfyUI-running-on-Podman-WSL2
-if [ -f .env ]; then
+if [ -f env ]; then
   set -a
-  source .env
+  source ./env
   set +a
 fi
 
