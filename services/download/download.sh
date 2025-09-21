@@ -8,6 +8,7 @@ mkdir -vp /data/.cache \
   /data/config/custom_nodes \
   /data/models/ \
   /data/models/checkpoints \
+  /data/models/diffusion_models \
   /data/models/vae \
   /data/models/loras \
   /data/models/upscale \
