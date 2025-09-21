@@ -3,7 +3,7 @@
 ## Environment
 私の実行環境紹介
 - OS : Windows11
-- WSL verison : 2.5.7.0
+- WSL verison : 2.5.10.0
 - Linux OS : Fedora Linux 42
 - CPU : AMD Ryzen 7 9700X
 - Memory : DDR5 64GB
@@ -18,26 +18,26 @@ kernelCommandLine = cgroup_no_v1=all
 
 ```
 > wsl --version
-WSL バージョン: 2.5.7.0
-カーネル バージョン: 6.6.87.1-1
+WSL バージョン: 2.5.10.0
+カーネル バージョン: 6.6.87.2-1
 WSLg バージョン: 1.0.66
 MSRDC バージョン: 1.2.6074
 Direct3D バージョン: 1.611.1-81528511
 DXCore バージョン: 10.0.26100.1-240331-1435.ge-release
-Windows バージョン: 10.0.26100.3915
+Windows バージョン: 10.0.26200.6718
 ```
 
 ## Setup on Windows
 1. Winキー + R で「ファイル名を指定して実行」
 2. 「cmd」を入力してOK
 3. (よく使うので)Windows Terminalをインストール
-```
+```powershell
 winget install --id Microsoft.WindowsTerminal --source winget
 ```
 
 4. WSLをインストール  
 インストーラーが立ち上がるので「はい」  
-```
+```powershell
 winget install --id Microsoft.WSL --source winget
 ```
 
@@ -45,12 +45,12 @@ winget install --id Microsoft.WSL --source winget
 
 6. WSLをアップデート
 インストーラーが立ち上がるので「はい」  
-```
+```powershell
 wsl --update
 ```
 
 7. WSLにFedora42を入れる  
-```
+```powershell
 wsl --install FedoraLinux-42
 ```
 
@@ -61,7 +61,7 @@ wsl --install FedoraLinux-42
 >Enter new UNIX username: 
 
 9. 次回Windows起動時はWindows TermainalなどでFedoraを立ち上げる
-```
+```powershell
 wsl -d FedoraLinux-42
 ```
 
@@ -162,25 +162,6 @@ chmod +x build.sh start_comfyui.sh
 # モデルをダウンロードするためのコンテナを実行
 ./build.sh
 ```
-
-FLUX.1関係のファイルはHugging Faceにてアカウント登録後、手動でダウンロード  
-
-> flux1-dev.safetensors
-
-https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors
-
-ダウンロードしたら、  
-/opt/ComfyUI-running-on-Podman-WSL2/data/models/checkpoints/flux1-dev.safetensors  
-に移動
-
-
-> diffusion_pytorch_model.safetensors
-
-https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/vae/diffusion_pytorch_model.safetensors
-
-ダウンロードしたら、  
-/opt/ComfyUI-running-on-Podman-WSL2/data/models/vae/diffusion_pytorch_model.safetensors  
-に移動
 
 ## Launch ComfyUI
 ここまでたどり着いたらあとはComfyUIを起動するのみ
