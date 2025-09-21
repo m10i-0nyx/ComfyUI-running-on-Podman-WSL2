@@ -1,7 +1,7 @@
-FROM docker.io/nvidia/cuda:12.9.1-base-ubuntu24.04
+FROM docker.io/nvidia/cuda:13.0.1-base-ubuntu24.04
 
 ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1
-ARG COMFYUI_TAG=v0.3.48
+ARG COMFYUI_TAG=v0.3.59
 ENV ROOT=/comfyui
 
 RUN set -eux \
