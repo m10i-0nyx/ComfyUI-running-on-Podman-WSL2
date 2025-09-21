@@ -30,9 +30,6 @@ podman build -t comfyui:${COMFYUI_TAG} \
   ./services/comfyui/
 
 # ComfyUI-Manager をクローン
-if [ ! -d "./output/config/custom_nodes/ComfyUI-Manager" ]; then
-  git clone https://github.com/ltdrdata/ComfyUI-Manager.git ./output/config/custom_nodes/ComfyUI-Manager
-  cd ./output/config/custom_nodes/ComfyUI-Manager
-  git fetch --tags
-  git checkout tags/3.35
+if [ ! -d "./data/config/custom_nodes/ComfyUI-Manager" ]; then
+  git clone -b main --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git ./data/config/custom_nodes/ComfyUI-Manager
 fi
