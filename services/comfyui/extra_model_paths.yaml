@@ -1,20 +1,14 @@
+---
 a111:
   base_path: /data
-
   checkpoints: models/checkpoints
-  vae: models/vae
+  clip: models/clip
+  controlnet: models/controlnet
+  custom_nodes: config/custom_nodes
+  diffusion_models: models/diffusion_models
+  embeddings: embeddings
+  gligen: models/gligen
+  hypernetworks: models/hypernetworks
   loras: models/loras
   upscale_models: models/upslace
-  hypernetworks: models/hypernetworks
-  controlnet: models/controlnet
-  gligen: models/gligen
-  clip: models/clip
-  embeddings: embeddings
-
-  custom_nodes: config/custom_nodes
-
-  # TODO: I am unsure about these, need more testing
-  # style_models: config/comfy/style_models
-  # t2i_adapter: config/comfy/t2i_adapter
-  # clip_vision: config/comfy/clip_vision
-  # diffusers: config/comfy/diffusers
+  vae: models/vae
