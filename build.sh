@@ -31,11 +31,6 @@ podman build -t comfyui:${COMFYUI_TAG} \
   --device "nvidia.com/gpu=all" \
   ./services/comfyui/
 
-# ComfyUI-Manager をクローン
-if [ ! -d "./data/config/custom_nodes/ComfyUI-Manager" ]; then
-  git clone -b main --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git ./data/config/custom_nodes/ComfyUI-Manager
-fi
-
 # ComfyUIのコンテナをバックグラウンドで起動
 podman run -d --replace \
   --name comfyui \
@@ -47,10 +42,10 @@ podman run -d --replace \
 # 変換処理
 podman exec -t comfyui bash -c \
 'find /data/models/diffusion_models/ -type f -name "*.ckpt" -print0 |
- xargs -0 -I {} /opt/venv/bin/python3 /docker/convert_ckpt2safetensors.py "{}"'
+ xargs -0 -I {} python3 /docker/convert_ckpt2safetensors.py "{}"'
 podman exec -t comfyui bash -c \
 'find /data/models/checkpoints/ -type f -name "*.ckpt" -print0 |
- xargs -0 -I {} /opt/venv/bin/python3 /docker/convert_ckpt2safetensors.py "{}"'
+ xargs -0 -I {} python3 /docker/convert_ckpt2safetensors.py "{}"'
 
 # コンテナ削除
 podman container rm -f comfyui
