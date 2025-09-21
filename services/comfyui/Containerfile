@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     && cd ${ROOT} \
     && git checkout tags/${COMFYUI_TAG} \
     && sed -i 's/^torch$/torch==2.7.1/' requirements.txt \
-    && pip3 install --upgrade pip \
+    && pip3 install --upgrade pip safetensors \
     && pip3 install -r requirements.txt
 
 WORKDIR ${ROOT}
