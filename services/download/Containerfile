@@ -1,4 +1,4 @@
-FROM docker.io/library/bash:alpine3.20
+FROM docker.io/library/bash:alpine3.22
 
 RUN apk update && apk add parallel aria2
 COPY . /docker
