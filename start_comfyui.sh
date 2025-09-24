@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /opt/ComfyUI-running-on-Podman-WSL2
+cd /opt/ComfyUI-running-on-container
 if [ -f env ]; then
   set -a
   source ./env
