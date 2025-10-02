@@ -4,6 +4,8 @@ This repository provides a setup to run [ComfyUI](https://github.com/comfyanonym
 
 [Fedora Host computer](README.fedora.md)  
 
+if you want to use Ubuntu22, please refer to [Ubuntu22 Host Computer](https://github.com/m10i-0nyx/ComfyUI-running-on-container-with-ubuntu22).
+
 ## Environment
 私の実行環境紹介
 - OS : Windows11 Pro 25H2
