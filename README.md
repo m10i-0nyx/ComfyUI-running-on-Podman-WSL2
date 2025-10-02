@@ -2,8 +2,7 @@
 
 This repository provides a setup to run [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on a Linux container using Podman/Docker.
 
-[Fedora](README.fedora.md)
-[Ubuntu](README.ubuntu.md)
+[Fedora Host computer](README.fedora.md)  
 
 ## Environment
 私の実行環境紹介
