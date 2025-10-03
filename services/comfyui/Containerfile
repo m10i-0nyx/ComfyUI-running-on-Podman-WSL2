@@ -1,17 +1,15 @@
-FROM docker.io/nvidia/cuda:13.0.1-base-ubuntu24.04
+FROM docker.io/nvidia/cuda:12.8.1-devel-ubi9
 
-ARG COMFYUI_TAG=v0.3.59
-ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1
+ARG COMFYUI_TAG=v0.3.62
+ENV PIP_PREFER_BINARY=1
 ENV ROOT=/comfyui
 ENV VENV_PATH=/opt/venv
 ENV PATH="/root/.local/bin:${VENV_PATH}/bin:${PATH}"
 
 RUN set -eux \
-    && apt-get update \
-    && apt-get full-upgrade -y --no-install-recommends \
-    && apt-get install -y --no-install-recommends curl git python3.12 python3.12-venv libgl1 libopengl0 libglu1-mesa \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
+    && dnf update -y \
+    && dnf install -y git python3.12 mesa-libGL mesa-libGLU libglvnd \
+    && dnf clean all \
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
     && uv venv -p 3.12 ${VENV_PATH}
 
@@ -24,8 +22,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     && uv pip install --upgrade wheel setuptools \
     && sed -i 's/^torch$/torch==2.7.1/' requirements.txt \
     && uv pip install -r requirements.txt \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends python3.12-dev nvidia-cuda-toolkit build-essential g++ cmake \
+    && dnf install -y python3.12-devel cmake \
     \
     # ComfyUI-Manager をクローン,　依存関係をインストール
     && git clone -b main --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git ${ROOT}/custom_nodes/ComfyUI-Manager \
@@ -70,11 +67,8 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     && uv pip install . \
     \
     # Cleanup
-    && cd ${ROOT} \
-    && apt-get remove -y python3.12-dev nvidia-cuda-toolkit build-essential g++ cmake \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && cd / \
+    && dnf clean all
 
 WORKDIR ${ROOT}
 COPY . /docker/
