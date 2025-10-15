@@ -1,6 +1,6 @@
 FROM docker.io/nvidia/cuda:12.8.1-devel-ubi9
 
-ARG COMFYUI_TAG=v0.3.62
+ARG COMFYUI_TAG=v0.3.65
 ENV PIP_PREFER_BINARY=1
 ENV ROOT=/comfyui
 ENV VENV_PATH=/opt/venv
