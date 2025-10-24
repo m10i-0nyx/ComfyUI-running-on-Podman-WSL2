@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM docker.io/nvidia/cuda:12.9.1-devel-ubi9 AS builder
-ARG COMFYUI_TAG=v0.3.65
+ARG COMFYUI_TAG=v0.3.66
 ENV PYTHON_VERSION=3.12
 ENV ROOT=/comfyui
 ENV VENV_PATH=/opt/venv
