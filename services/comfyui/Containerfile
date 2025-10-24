@@ -1,41 +1,40 @@
-FROM docker.io/nvidia/cuda:12.8.1-devel-ubi9
-
+# syntax=docker/dockerfile:1
+FROM docker.io/nvidia/cuda:12.9.1-devel-ubi9 AS builder
 ARG COMFYUI_TAG=v0.3.65
-ENV PIP_PREFER_BINARY=1
+ENV PYTHON_VERSION=3.12
 ENV ROOT=/comfyui
 ENV VENV_PATH=/opt/venv
 ENV PATH="/root/.local/bin:${VENV_PATH}/bin:${PATH}"
 
 RUN set -eux \
     && dnf update -y \
-    && dnf install -y git python3.12 mesa-libGL mesa-libGLU libglvnd \
-    && dnf clean all \
+    && dnf install -y git python3.12 python3.12-devel python3.12-pip python3.12-wheel python3.12-setuptools ninja-build \
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
-    && uv venv -p 3.12 ${VENV_PATH}
+    && uv venv -p ${PYTHON_VERSION} ${VENV_PATH}
 
-RUN --mount=type=cache,target=/root/.cache/pip \
-    set -eux \
+RUN set -eux \
+    # ComfyUI-Manager をクローン,　依存関係をインストール
     && git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} \
     && cd ${ROOT} \
     && git checkout tags/${COMFYUI_TAG} \
-    && uv pip install --upgrade pip \
-    && uv pip install --upgrade wheel setuptools \
     && sed -i 's/^torch$/torch==2.7.1/' requirements.txt \
-    && uv pip install -r requirements.txt \
-    && dnf install -y python3.12-devel cmake \
-    \
+    && uv pip install -r requirements.txt
+
+RUN set -eux \
     # ComfyUI-Manager をクローン,　依存関係をインストール
     && git clone -b main --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git ${ROOT}/custom_nodes/ComfyUI-Manager \
     && cd ${ROOT}/custom_nodes/ComfyUI-Manager \
     && git pull --force origin main \
-    && uv pip install -r requirements.txt \
-    \
-    # ComfyUI_essentials をクローン
+    && uv pip install -r requirements.txt
+
+RUN set -eux \
+    # ComfyUI_essentials をクローン,　依存関係をインストール
     && git clone -b main --depth 1 https://github.com/cubiq/ComfyUI_essentials.git ${ROOT}/custom_nodes/ComfyUI-essentials \
     && cd ${ROOT}/custom_nodes/ComfyUI-essentials \
     && git pull --force origin main \
-    && uv pip install -r requirements.txt \
-    \
+    && uv pip install -r requirements.txt
+
+RUN set -eux \
     # ComfyUI-Hunyuan3DWrapper をクローン,　依存関係をインストール
     && git clone -b main --depth 1 https://github.com/kijai/ComfyUI-Hunyuan3DWrapper.git ${ROOT}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
     && cd ${ROOT}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
@@ -49,8 +48,9 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     && uv pip install --no-build-isolation . \
     # Boundary Preserving Transform install
     && cd ${ROOT}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/shapegen/bpt \
-    && uv pip install -r requirements.txt \
-    \
+    && uv pip install -r requirements.txt
+
+RUN set -eux \
     # Xatlas Upgrade
     && cd /tmp \
     && uv pip uninstall xatlas \
@@ -64,10 +64,18 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     # 6778行目の「#endif」を「//#endif」に
     && sed -i '6778s/^#endif$/\/\/#endif/' xatlas.cpp \
     && cd /tmp/xatlas-python/ \
-    && uv pip install . \
-    \
-    # Cleanup
-    && cd / \
+    && uv pip install .
+
+FROM docker.io/nvidia/cuda:12.9.1-runtime-ubi9
+ENV ROOT=/comfyui
+ENV VENV_PATH=/opt/venv
+ENV PATH="/root/.local/bin:${VENV_PATH}/bin:${PATH}"
+COPY --from=builder ${VENV_PATH} ${VENV_PATH}
+COPY --from=builder ${ROOT} ${ROOT}
+
+RUN set -eux \
+    && dnf update -y \
+    && dnf install -y git python3.12 python3.12-pip mesa-libGL mesa-libGLU libglvnd \
     && dnf clean all
 
 WORKDIR ${ROOT}
