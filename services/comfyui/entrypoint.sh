@@ -7,8 +7,8 @@ mkdir -vp /data/config/custom_nodes
 declare -A MOUNTS
 
 MOUNTS["/root/.cache"]="/data/.cache"
-MOUNTS["${ROOT}/input"]="/data/config/input"
-MOUNTS["${ROOT}/output"]="/output"
+MOUNTS["${WORKSPACE}/input"]="/data/config/input"
+MOUNTS["${WORKSPACE}/output"]="/output"
 
 for to_path in "${!MOUNTS[@]}"; do
   set -Eeuo pipefail
@@ -23,7 +23,7 @@ for to_path in "${!MOUNTS[@]}"; do
 done
 
 if [ -f "/data/config/startup.sh" ]; then
-  pushd ${ROOT}
+  pushd ${WORKSPACE}
   . /data/config/startup.sh
   popd
 fi
