@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 FROM docker.io/nvidia/cuda:12.9.1-devel-ubi9 AS builder
-ARG COMFYUI_TAG=v0.3.66
-ENV PYTHON_VERSION=3.12
-ENV ROOT=/comfyui
+ARG COMFYUI_TAG=v0.3.67
+ARG PYTHON_VERSION=3.12
+ENV WORKSPACE=/comfyui
 ENV VENV_PATH=/opt/venv
 ENV PATH="/root/.local/bin:${VENV_PATH}/bin:${PATH}"
 
@@ -14,40 +14,40 @@ RUN set -eux \
 
 RUN set -eux \
     # ComfyUI-Manager をクローン,　依存関係をインストール
-    && git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} \
-    && cd ${ROOT} \
+    && git clone https://github.com/comfyanonymous/ComfyUI.git ${WORKSPACE} \
+    && cd ${WORKSPACE} \
     && git checkout tags/${COMFYUI_TAG} \
     && sed -i 's/^torch$/torch==2.7.1/' requirements.txt \
     && uv pip install -r requirements.txt
 
 RUN set -eux \
     # ComfyUI-Manager をクローン,　依存関係をインストール
-    && git clone -b main --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git ${ROOT}/custom_nodes/ComfyUI-Manager \
-    && cd ${ROOT}/custom_nodes/ComfyUI-Manager \
+    && git clone -b main --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git ${WORKSPACE}/custom_nodes/ComfyUI-Manager \
+    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Manager \
     && git pull --force origin main \
     && uv pip install -r requirements.txt
 
 RUN set -eux \
     # ComfyUI_essentials をクローン,　依存関係をインストール
-    && git clone -b main --depth 1 https://github.com/cubiq/ComfyUI_essentials.git ${ROOT}/custom_nodes/ComfyUI-essentials \
-    && cd ${ROOT}/custom_nodes/ComfyUI-essentials \
+    && git clone -b main --depth 1 https://github.com/cubiq/ComfyUI_essentials.git ${WORKSPACE}/custom_nodes/ComfyUI-essentials \
+    && cd ${WORKSPACE}/custom_nodes/ComfyUI-essentials \
     && git pull --force origin main \
     && uv pip install -r requirements.txt
 
 RUN set -eux \
     # ComfyUI-Hunyuan3DWrapper をクローン,　依存関係をインストール
-    && git clone -b main --depth 1 https://github.com/kijai/ComfyUI-Hunyuan3DWrapper.git ${ROOT}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
-    && cd ${ROOT}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
+    && git clone -b main --depth 1 https://github.com/kijai/ComfyUI-Hunyuan3DWrapper.git ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
+    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
     && git pull --force origin main \
     && uv pip install -r requirements.txt \
     # Rasterizer, to build and install
-    && cd ${ROOT}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/custom_rasterizer \
+    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/custom_rasterizer \
     && uv pip install --no-build-isolation . \
     # For the mesh_processor extension install
-    && cd ${ROOT}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/differentiable_renderer \
+    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/differentiable_renderer \
     && uv pip install --no-build-isolation . \
     # Boundary Preserving Transform install
-    && cd ${ROOT}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/shapegen/bpt \
+    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/shapegen/bpt \
     && uv pip install -r requirements.txt
 
 RUN set -eux \
@@ -67,21 +67,21 @@ RUN set -eux \
     && uv pip install .
 
 FROM docker.io/nvidia/cuda:12.9.1-runtime-ubi9
-ENV ROOT=/comfyui
+ENV WORKSPACE=/comfyui
 ENV VENV_PATH=/opt/venv
 ENV PATH="/root/.local/bin:${VENV_PATH}/bin:${PATH}"
 COPY --from=builder ${VENV_PATH} ${VENV_PATH}
-COPY --from=builder ${ROOT} ${ROOT}
+COPY --from=builder ${WORKSPACE} ${WORKSPACE}
 
 RUN set -eux \
     && dnf update -y \
     && dnf install -y git python3.12 python3.12-pip mesa-libGL mesa-libGLU libglvnd \
     && dnf clean all
 
-WORKDIR ${ROOT}
+WORKDIR ${WORKSPACE}
 COPY . /docker/
 RUN chmod u+x /docker/entrypoint.sh \
-    && cp /docker/extra_model_paths.yaml ${ROOT}
+    && cp /docker/extra_model_paths.yaml ${WORKSPACE}
 
 ENV NVIDIA_VISIBLE_DEVICES=all PYTHONPATH="${PYTHONPATH}:${PWD}" CLI_ARGS=""
 EXPOSE 8888
