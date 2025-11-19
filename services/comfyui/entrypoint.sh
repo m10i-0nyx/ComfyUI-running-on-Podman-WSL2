@@ -2,13 +2,11 @@
 
 set -Eeuo pipefail
 
-mkdir -vp /data/config/custom_nodes
-
 declare -A MOUNTS
 
-MOUNTS["/root/.cache"]="/data/.cache"
-MOUNTS["${WORKSPACE}/input"]="/data/config/input"
-MOUNTS["${WORKSPACE}/output"]="/output"
+MOUNTS["/root/.cache"]="${WORKSPACE}/data/.cache"
+MOUNTS["${WORKSPACE}/input"]="${WORKSPACE}/data/config/input"
+MOUNTS["/comfyui/output"]="${WORKSPACE}/output"
 
 for to_path in "${!MOUNTS[@]}"; do
   set -Eeuo pipefail
@@ -22,9 +20,9 @@ for to_path in "${!MOUNTS[@]}"; do
   echo Mounted $(basename "${from_path}")
 done
 
-if [ -f "/data/config/startup.sh" ]; then
+if [ -f "${WORKSPACE}/data/config/startup.sh" ]; then
   pushd ${WORKSPACE}
-  . /data/config/startup.sh
+  . ${WORKSPACE}/data/config/startup.sh
   popd
 fi
 

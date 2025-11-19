@@ -32,17 +32,17 @@ podman build -t comfyui:${COMFYUI_TAG} \
 # ComfyUIのコンテナをバックグラウンドで起動
 podman run -d --replace \
   --name comfyui \
-  --volume "$(pwd)/data:/data" \
+  --volume "$(pwd)/data:/workspace/data" \
   --device "nvidia.com/gpu=all" \
   localhost/comfyui:${COMFYUI_TAG} \
   sleep infinity
 
 # 変換処理
 podman exec -t comfyui bash -c \
-'find /data/models/diffusion_models/ -type f -name "*.ckpt" -print0 |
+'find /workspace/data/models/diffusion_models/ -type f -name "*.ckpt" -print0 |
  xargs -0 -I {} python3 /docker/convert_ckpt2safetensors.py "{}"'
 podman exec -t comfyui bash -c \
-'find /data/models/checkpoints/ -type f -name "*.ckpt" -print0 |
+'find /workspace/data/models/checkpoints/ -type f -name "*.ckpt" -print0 |
  xargs -0 -I {} python3 /docker/convert_ckpt2safetensors.py "{}"'
 
 # コンテナ削除

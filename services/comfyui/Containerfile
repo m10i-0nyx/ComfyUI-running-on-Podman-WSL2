@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
-FROM docker.io/nvidia/cuda:12.9.1-devel-ubi9 AS builder
+FROM docker.io/nvidia/cuda:12.8.1-devel-ubi9 AS builder
 ARG COMFYUI_TAG=v0.3.67
 ARG PYTHON_VERSION=3.12
-ENV WORKSPACE=/comfyui
+ENV COMFYUI_DIR=/comfyui
 ENV VENV_PATH=/opt/venv
 ENV PATH="/root/.local/bin:${VENV_PATH}/bin:${PATH}"
 
@@ -14,40 +14,40 @@ RUN set -eux \
 
 RUN set -eux \
     # ComfyUI-Manager をクローン,　依存関係をインストール
-    && git clone https://github.com/comfyanonymous/ComfyUI.git ${WORKSPACE} \
-    && cd ${WORKSPACE} \
+    && git clone https://github.com/comfyanonymous/ComfyUI.git ${COMFYUI_DIR} \
+    && cd ${COMFYUI_DIR} \
     && git checkout tags/${COMFYUI_TAG} \
     && sed -i 's/^torch$/torch==2.7.1/' requirements.txt \
     && uv pip install -r requirements.txt
 
 RUN set -eux \
     # ComfyUI-Manager をクローン,　依存関係をインストール
-    && git clone -b main --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git ${WORKSPACE}/custom_nodes/ComfyUI-Manager \
-    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Manager \
+    && git clone -b main --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git ${COMFYUI_DIR}/custom_nodes/ComfyUI-Manager \
+    && cd ${COMFYUI_DIR}/custom_nodes/ComfyUI-Manager \
     && git pull --force origin main \
     && uv pip install -r requirements.txt
 
 RUN set -eux \
     # ComfyUI_essentials をクローン,　依存関係をインストール
-    && git clone -b main --depth 1 https://github.com/cubiq/ComfyUI_essentials.git ${WORKSPACE}/custom_nodes/ComfyUI-essentials \
-    && cd ${WORKSPACE}/custom_nodes/ComfyUI-essentials \
+    && git clone -b main --depth 1 https://github.com/cubiq/ComfyUI_essentials.git ${COMFYUI_DIR}/custom_nodes/ComfyUI-essentials \
+    && cd ${COMFYUI_DIR}/custom_nodes/ComfyUI-essentials \
     && git pull --force origin main \
     && uv pip install -r requirements.txt
 
 RUN set -eux \
     # ComfyUI-Hunyuan3DWrapper をクローン,　依存関係をインストール
-    && git clone -b main --depth 1 https://github.com/kijai/ComfyUI-Hunyuan3DWrapper.git ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
-    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
+    && git clone -b main --depth 1 https://github.com/kijai/ComfyUI-Hunyuan3DWrapper.git ${COMFYUI_DIR}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
+    && cd ${COMFYUI_DIR}/custom_nodes/ComfyUI-Hunyuan3DWrapper \
     && git pull --force origin main \
     && uv pip install -r requirements.txt \
     # Rasterizer, to build and install
-    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/custom_rasterizer \
+    && cd ${COMFYUI_DIR}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/custom_rasterizer \
     && uv pip install --no-build-isolation . \
     # For the mesh_processor extension install
-    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/differentiable_renderer \
+    && cd ${COMFYUI_DIR}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/texgen/differentiable_renderer \
     && uv pip install --no-build-isolation . \
     # Boundary Preserving Transform install
-    && cd ${WORKSPACE}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/shapegen/bpt \
+    && cd ${COMFYUI_DIR}/custom_nodes/ComfyUI-Hunyuan3DWrapper/hy3dgen/shapegen/bpt \
     && uv pip install -r requirements.txt
 
 RUN set -eux \
@@ -66,23 +66,24 @@ RUN set -eux \
     && cd /tmp/xatlas-python/ \
     && uv pip install .
 
-FROM docker.io/nvidia/cuda:12.9.1-runtime-ubi9
-ENV WORKSPACE=/comfyui
+FROM docker.io/nvidia/cuda:12.8.1-runtime-ubi9
+ENV COMFYUI_DIR=/comfyui
 ENV VENV_PATH=/opt/venv
 ENV PATH="/root/.local/bin:${VENV_PATH}/bin:${PATH}"
 COPY --from=builder ${VENV_PATH} ${VENV_PATH}
-COPY --from=builder ${WORKSPACE} ${WORKSPACE}
+COPY --from=builder ${COMFYUI_DIR} ${COMFYUI_DIR}
 
 RUN set -eux \
     && dnf update -y \
     && dnf install -y git python3.12 python3.12-pip mesa-libGL mesa-libGLU libglvnd \
     && dnf clean all
 
-WORKDIR ${WORKSPACE}
+WORKDIR ${COMFYUI_DIR}
 COPY . /docker/
 RUN chmod u+x /docker/entrypoint.sh \
-    && cp /docker/extra_model_paths.yaml ${WORKSPACE}
+    && cp /docker/extra_model_paths.yaml ${COMFYUI_DIR}
 
+ENV WORKSPACE="/workspace"
 ENV NVIDIA_VISIBLE_DEVICES=all PYTHONPATH="${PYTHONPATH}:${PWD}" CLI_ARGS=""
 EXPOSE 8888
 ENTRYPOINT ["/docker/entrypoint.sh"]
