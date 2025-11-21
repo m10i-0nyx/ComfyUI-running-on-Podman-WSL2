@@ -83,8 +83,13 @@ COPY . /docker/
 RUN chmod u+x /docker/entrypoint.sh \
     && cp /docker/extra_model_paths.yaml ${COMFYUI_DIR}
 
+# NVIDIAランタイムの設定
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
 ENV WORKSPACE="/workspace"
-ENV NVIDIA_VISIBLE_DEVICES=all PYTHONPATH="${PYTHONPATH}:${PWD}" CLI_ARGS=""
+ENV PYTHONPATH="${PYTHONPATH}:${PWD}"
+ENV CLI_ARGS=""
 EXPOSE 8888
 ENTRYPOINT ["/docker/entrypoint.sh"]
 CMD python3 -u main.py --listen --port 8888 ${CLI_ARGS}
