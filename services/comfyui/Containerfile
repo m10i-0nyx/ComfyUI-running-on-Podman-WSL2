@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM docker.io/nvidia/cuda:12.8.1-devel-ubi9 AS builder
-ARG COMFYUI_TAG=v0.3.67
+FROM docker.io/nvidia/cuda:12.9.1-devel-ubi9 AS builder
+ARG COMFYUI_TAG=v0.3.71
 ARG PYTHON_VERSION=3.12
 ENV COMFYUI_DIR=/comfyui
 ENV VENV_PATH=/opt/venv
@@ -66,17 +66,18 @@ RUN set -eux \
     && cd /tmp/xatlas-python/ \
     && uv pip install .
 
-FROM docker.io/nvidia/cuda:12.8.1-runtime-ubi9
+FROM docker.io/nvidia/cuda:12.9.1-runtime-ubi9
 ENV COMFYUI_DIR=/comfyui
 ENV VENV_PATH=/opt/venv
 ENV PATH="/root/.local/bin:${VENV_PATH}/bin:${PATH}"
-COPY --from=builder ${VENV_PATH} ${VENV_PATH}
-COPY --from=builder ${COMFYUI_DIR} ${COMFYUI_DIR}
 
 RUN set -eux \
     && dnf update -y \
     && dnf install -y git python3.12 python3.12-pip mesa-libGL mesa-libGLU libglvnd \
     && dnf clean all
+
+COPY --from=builder ${VENV_PATH} ${VENV_PATH}
+COPY --from=builder ${COMFYUI_DIR} ${COMFYUI_DIR}
 
 WORKDIR ${COMFYUI_DIR}
 COPY . /docker/
@@ -86,6 +87,7 @@ RUN chmod u+x /docker/entrypoint.sh \
 # NVIDIAランタイムの設定
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_DISABLE_REQUIRE=1
 
 ENV WORKSPACE="/workspace"
 ENV PYTHONPATH="${PYTHONPATH}:${PWD}"
