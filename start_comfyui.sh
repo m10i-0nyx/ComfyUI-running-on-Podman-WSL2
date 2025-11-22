@@ -23,7 +23,7 @@ ARGS="${ARGS} --dont-print-server"
 # WSL2起動時に実行すればOK
 podman run -d --rm \
   --name comfyui \
-  -p 8888:8888 \
+  -p 8188:8188 \
   --volume "$(pwd)/data:/workspace/data" \
   --volume "$(pwd)/output:/workspace/output" \
   --device "nvidia.com/gpu=all" \

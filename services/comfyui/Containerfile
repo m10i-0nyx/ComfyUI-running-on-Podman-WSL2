@@ -92,6 +92,6 @@ ENV NVIDIA_DISABLE_REQUIRE=1
 ENV WORKSPACE="/workspace"
 ENV PYTHONPATH="${PYTHONPATH}:${PWD}"
 ENV CLI_ARGS=""
-EXPOSE 8888
+EXPOSE 8188
 ENTRYPOINT ["/docker/entrypoint.sh"]
-CMD python3 -u main.py --listen --port 8888 ${CLI_ARGS}
+CMD python3 -u main.py --listen --port 8188 ${CLI_ARGS}
