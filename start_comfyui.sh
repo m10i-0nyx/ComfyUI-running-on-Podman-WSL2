@@ -21,9 +21,10 @@ ARGS="${ARGS} --dont-print-server"
 
 # ComfyUIのコンテナを実行
 # WSL2起動時に実行すればOK
-podman run -d --rm \
+podman run -d \
   --name comfyui \
   -p 8188:8188 \
+  -p 8888:8888 \
   --volume "$(pwd)/data:/workspace/data" \
   --volume "$(pwd)/output:/workspace/output" \
   --device "nvidia.com/gpu=all" \

@@ -2,6 +2,8 @@
 
 set -Eeuo pipefail
 
+mkdir -p ${WORKSPACE}/data/models/{checkpoints,clip,clip_vision,controlnet,diffusion_models,gligen,hypernetworks,loras,text_encoders,upscale,vae}
+
 declare -A MOUNTS
 
 MOUNTS["/root/.cache"]="${WORKSPACE}/data/.cache"
@@ -26,4 +28,5 @@ if [ -f "${WORKSPACE}/data/config/startup.sh" ]; then
   popd
 fi
 
+. ${VENV_PATH}/bin/activate
 exec "$@"
